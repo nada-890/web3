@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        
+   .gg-mic {
+ box-sizing: border-box;
+ position: relative;
+ display: block;
+ transform: scale(var(--ggs,1));
+ width: 16px;
+ height: 12px;
+ border-bottom-left-radius: 120px;
+ border-bottom-right-radius: 120px;
+ border: 2px solid;
+ border-top: 0;
+ margin-top: 3px
+}
+
+.gg-mic::after,
+.gg-mic::before {
+ content: "";
+ display: block;
+ box-sizing: border-box;
+ position: absolute
+}
+
+.gg-mic::after {
+ border: 2px solid;
+ width: 8px;
+ height: 18px;
+ left: 2px;
+ top: -10px;
+ border-radius: 4px
+}
+
+.gg-mic::before {
+ width: 10px;
+ height: 4px;
+ top: 12px;
+ left: 1px;
+ border-right: 4px solid transparent;
+ box-shadow:
+ 0 2px 0,
+ inset -2px 0 0
+} 
+    
+    </style>
+    <title>Voice to Text</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <button class="gg-mic" id="start-btn"><br> <br> <br> Start Recording</button>
+    <div id="result"></div>
+
+    <script>
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            $('#result').text(transcript);
+            saveToDatabase(transcript);
+        };
+
+        $('#start-btn').click(function() {
+            recognition.start();
+        });
+
+        function saveToDatabase(text) {
+            $.ajax({
+                url: 'vo.php',
+                method: 'POST',
+                data: { text: text },
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+    </script>
+</body>
